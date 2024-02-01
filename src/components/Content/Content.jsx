@@ -1,6 +1,6 @@
- import styles from './Content.module.scss';
-import Recipe from './Recipe';
-import { data } from '../data/recipes';
+import styles from "./Content.module.scss";
+import Recipe from "../Recipe/Recipe";
+import { data } from "../../data/recipes";
 
 function Content() {
   const recipes = data;
@@ -20,4 +20,3 @@ function Content() {
 }
 
 export default Content;
- 
