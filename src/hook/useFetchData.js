@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function useFetchData(url, page) {
+export function useFetchData(url, page) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState([]);
@@ -14,6 +14,7 @@ function useFetchData(url, page) {
         if (page) {
           queryParam.append("limit", 18);
           queryParam.append("skip", (page - 1) * 18);
+          queryParam.append("sort", "createdAt:-1");
         }
         const response = await fetch(url + `?${queryParam}`);
         if (response.ok && !cancel) {
@@ -23,7 +24,6 @@ function useFetchData(url, page) {
           );
         }
       } catch (e) {
-        console.log("ERREUR");
         setError("Erreur");
       } finally {
         if (!cancel) {
