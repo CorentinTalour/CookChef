@@ -1,32 +1,33 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import styles from "./HomePage.module.scss";
 import Recipe from "./components/Recipe/Recipe";
 import Loading from "../../components/Loading/Loading";
-import { ApiContext } from "../../context/ApiContext";
 import Search from "./components/Search/Search";
-import useFetchData from "../../hook/useFetchData";
+import { useFetchRecipes } from "../../hook/useFetchRecipes";
+import { updateRecipe as updateR, deleteRecipe as deleteR } from "../../apis";
 
 export default function HomePage() {
-  const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
-  const BASE_URL_API = useContext(ApiContext);
-  const [[recipes, setRecipes], isLoading] = useFetchData(BASE_URL_API, page);
+  const [page, setPage] = useState(1);
+  const [[recipes, setRecipes], isLoading] = useFetchRecipes(page);
 
-  function updateRecipe(updatedRecipe) {
+  async function updateRecipe(updatedRecipe) {
+    const savedRecipe = await updateR(updatedRecipe);
     setRecipes(
-      recipes.map((r) => (r._id === updatedRecipe._id ? updatedRecipe : r))
+      recipes.map((r) => (r._id === savedRecipe._id ? savedRecipe : r))
     );
   }
 
-  function deleteRecipe(_id) {
+  async function deleteRecipe(_id) {
+    await deleteR(_id);
     setRecipes(recipes.filter((r) => r._id !== _id));
   }
 
   return (
     <div className="flex-fill container d-flex flex-column p-20">
       <h1 className="my-30">
-        Découvrez nos nouvelles recettes
-        <small className={styles.small}> - {recipes.length}</small>
+        Découvrez nos nouvelles recettes{" "}
+        <small className={styles.small}>- {recipes.length}</small>
       </h1>
       <div
         className={`card flex-fill d-flex flex-column p-20 mb-20 ${styles.contentCard}`}
@@ -42,8 +43,8 @@ export default function HomePage() {
                 <Recipe
                   key={r._id}
                   recipe={r}
+                  updateRecipe={updateRecipe}
                   deleteRecipe={deleteRecipe}
-                  toggleLikedRecipe={updateRecipe}
                 />
               ))}
           </div>
